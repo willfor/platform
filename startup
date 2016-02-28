@@ -1,0 +1,30 @@
+#!/bin/sh
+cp conf/application_prod.conf conf/application.conf
+
+port=9000
+while getopts 'p:c:i:' opt
+do
+ case $opt in
+    p)port=$OPTARG;;
+    c)cmd=$OPTARG;;
+    i)ip=$OPTARG;;
+ esac
+done
+
+rm -f run.pid
+mkdir -p logs && rm -f logs/startup.log
+
+compile="-Dprecompiled=true -server"
+if [ -d "app" ]
+then
+  compile=""
+fi
+
+start_conf="$cmd"
+if [ -n "$ip" ]; then
+  start_conf="-Dhttp.address=$ip $cmd"
+fi
+
+echo "play start $compile --http.port=$port --pid_file=run.pid $start_conf &> logs/startup.log"
+play start $compile --http.port=$port --pid_file=run.pid $start_conf &> logs/startup.log
+

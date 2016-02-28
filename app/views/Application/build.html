@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+#{extends 'main.html' /}
+#{set title:'PPCenter' /}
+<div id="build_sheet">
+<table align="center" width='95%'><tr><th align="center">打包信息</th></tr>
+    <tr><td>
+				<div><HR align=left SIZE=1 width="95%"></div>
+			</td></tr>	
+			
+    </table>  
+    <table class="inputTable" width='70%' align="center" id="detailsAllTable">
+     
+     <tr><th width='20%'>dep：</th>
+     <td>
+     branch <input type="text" style="width:150px" id=depbranchID name=mainbranchName value="" />      
+     tag <input type="text" style="width:150px" id=deptagID  name=maintagName value="" />(若tag为空，默认拉最新分支代码)     
+     </td>  
+     </tr>
+     
+     <tr> <th width='20%'>common：</th>
+      <td>
+      branch <input type="text" style="width:150px" id=commonbranchID  name=commonbranchName value="" />   
+      tag <input type="text" style="width:150px" id=commontagID  name=commontagName value="" />(若tag为空，默认拉最新分支代码)           
+     </td>
+     </tr>
+     
+     <tr><th width='20%'>barCode：</th><td>
+      branch <input type="text" style="width:150px" id=barCodebranchID  name=barCodebranchName value="" />   
+      tag <input type="text" style="width:150px" id=barCodetagID  name=barCodetagName value="" />(为空时默认拉master代码)        
+     </td>         
+     </tr>
+     
+      <tr><th>ppserver地址：</th>
+      <td>
+      <input type="text" style="width:300px" id=ppserver  name=ppserver value="" /> <br>
+      测试地址:  http://ppservertest4prea.test2.uae.uc.cn<br>正式地址:  http://sjzs-api.25pp.com
+        
+      </td>
+      </tr>
+      <tr><th>版本名：</th>
+      <td>
+      <input type="text" style="width:300px" id=versionname  name=versionname   />     
+      </td>
+      </tr>
+      <tr><th>版本号：</th>
+      <td>
+      <input type="text" style="width:300px" id=versionCode  name=versionCode />    
+      </td>
+      </tr>
+      <tr><th>渠道号</th>
+       <td>
+      <input type="text" style="width:300px" id=channel name=channel value='PP_24'/>
+      </td>
+      </tr> 
+    <!--    <tr><th>打包级别</th>
+      <td>
+      <input type="checkbox" name="" value="debug">debug包
+      <input type="checkbox" name="" value="debugsign">debug正式签名包
+      <input type="checkbox" name="" value="sign">正式包
+      </td>    
+      </tr>--> 
+      <tr><th>签名文件：</th>
+      <td>
+      <select name=sign id="sign" style="width:200px">
+      <option value='100'>默认签名</option>
+      <option value='0'>正式签名</option>
+      </select> (正式签名请慎用)
+      </td></tr>
+      <tr><th>选择构建方式：</th>
+      <td>
+      <input type="radio" name="citure" id="citrue" value="citrue" onclick="checkRadio('citrue', 'cifalse')"> 持续构建&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="radio" name="cifalse" id="cifalse" value="cifalse" onclick="checkRadio('cifalse', 'citrue')"> 单次构建
+      </td>
+      </tr>
+      </table>     
+      <table class="inputTable" align="center" width='70%' id="sendTable">
+      <tr>
+      <td align="center"><input style="float:center" type="button" name="submitSure" value="提交" onclick="javascript:submitCheck()"  >
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <input style="float:center" type="button"  value="取消" onclick="javascript:history.go(-1)"></td>
+      </tr>  </table>   
+      <table class="inputTable" align="center" width='70%' >    
+      <tr>
+      <td>		
+    	 注意事项：
+      1.打包中请选择（dep,common,barcode）的branch 和tag<br>
+      2.ppserver地址请参考下面例子填写<br>
+      3.渠道号默认是PP_24，正式包和测试包都是如此，不需要改动<br>
+      4.签名文件请选择“正式签名”<br>
+      5.如果仅需打包一次，构建方式请选择“单次构建”，如果需要每天都打包，请选择“持续构建”
+      </td></tr>
+      </table>
+      
+      <table align="center" width='95%'><tr><th align="center">自动化测试</th></tr>
+  	  <tr><td>
+		 <div><HR align=left SIZE=1 width="95%"></div>
+	  </td></tr>	
+    </table>  
+     <table class="inputTable" width='70%' align="center" id="detailsAllTable">
+     <tr><th width='20%'>CPU自动化测试</th>
+     <td>
+     branch <input type="text" style="width:150px" id=depbranchID name=mainbranchName value="" />      
+     tag <input type="text" style="width:150px" id=deptagID  name=maintagName value="" />(若tag为空，默认拉最新分支代码)     
+     </td>  
+     </tr>
+     </table>
+      
+</div>

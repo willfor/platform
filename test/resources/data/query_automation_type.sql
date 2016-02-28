@@ -1,0 +1,1 @@
+select@space@ type_id, type_name @space@from@space@ android_test_type

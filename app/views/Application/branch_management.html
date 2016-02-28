@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+#{extends 'main.html' /}
+#{set title:'PPCenter' /}
+
+<!-- 创建分支 -->
+<div class="row-fluid">
+	<div class="box span8">
+		<div class="box-header">
+			<h2><i class="icon-edit"></i>创建分支</h2>
+			<div class="box-icon">
+				<a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+				<a href="#" class="btn-close"><i class="icon-remove"></i></a>
+			</div>
+		</div>
+		
+		<div class="box-content">
+			<div id="BranchCreate" class="wizard">
+				<ul class="steps">
+					<li data-target="#step1" class="active"><span class="badge badge-info">1</span></li>
+					<li data-target="#step2"><span class="badge">2</span></li>
+				</ul>
+				<div class="actions">
+					<button type="button" class="btn btn-prev"> <i class="icon-arrow-left"></i> 上一步</button>
+					<button type="button" class="btn btn-success btn-next" data-last="保存" id="btn_save">下一步 <i class="icon-arrow-right"></i></button>
+				</div>
+			</div>
+			<div class="step-content">
+				<div class="step-pane active" id="step1">
+					<form class="form-horizontal"  id="branch_form">
+						<fieldset>
+							<div class="control-group">
+								<label class="control-label" for="branch_description">分支描述：</label>
+								<div class="controls">
+									<input type="text" id="branch_description" />
+									<span class="help-inline"></span>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="branch_name">分支名：</label>
+								<div class="controls">
+									<input type="text" id="branch_name" />
+									<span class="help-inline"></span>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+				
+				<div class="step-pane" id="step2">
+					<form class="form-horizontal">
+						<fieldset>
+							<div class="alert alert-info">
+						   		<strong>持续集成信息</strong>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="versionname">版本名：</label>
+								<div class="controls">
+									<input type="text" id="versionname" />
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="versioncode">版本号：</label>
+								<div class="controls">
+									<input type="text" id="versioncode" />
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label">PPServer地址：</label>
+								<div class="controls">
+									<select id="ppserverUrl" class="span6">
+										<option value="http://ppservertest4prea.test2.uae.uc.cn" selected="selected">http://ppservertest4prea.test2.uae.uc.cn</option>
+										<option value="http://ppservertest4preb.test2.uae.uc.cn">http://ppservertest4preb.test2.uae.uc.cn</option>
+										<option value="http://ppservertest4prec.test2.uae.uc.cn" >http://ppservertest4prec.test2.uae.uc.cn</option>
+										<option value="http://sjzs-api.25pp.com" >http://sjzs-api.25pp.com</option>
+								    </select>
+								</div>
+							</div>
+							<div class="control-group">
+								<label class="control-label" for="automationTest">自动化测试：</label>
+								<div class="controls">
+									<span id="automationTypes_span" /></span>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+								
+						
+			</div>
+			
+		</div>
+	</div>
+</div>
+
+
+<!-- 分支列表显示 -->
+<div class="row-fluid">	
+	<div class="box span8">
+		<div class="box-header">
+			<h2><i class="icon-align-justify"></i><span class="break"></span>分支列表</h2>
+			<div class="box-icon">
+				<a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+				<a href="#" class="btn-close"><i class="icon-remove"></i></a>
+			</div>
+		</div>
+
+		<div class="box-content">
+			<table class="table table-bordered table-striped table-condensed">
+				<thead>
+					<tr>
+						<th>分支名称</th>
+						<th>分支名</th>
+						<th>打包版本名</th>
+						<th>打包版本号</th>
+						<th>PPServerURL</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+
+				<tbody id="branch_info_body">
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+
+
+<script type="text/javascript" src="/public/js/app/branch_management.js">
+</script>

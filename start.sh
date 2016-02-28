@@ -1,0 +1,1 @@
+play run -Dprecompiled=true -server -Xmx512m -XX:MaxPermSize=128m

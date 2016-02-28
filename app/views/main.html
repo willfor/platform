@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>#{get 'title' /}</title>
+        <meta charset="utf-8" content="width=device-width, initial-scale=1.0">
+        
+		
+		#{render 'layouts/_header.html'/}
+		
+		#{render 'layouts/_external_js.html'/}
+		#{get 'moreStyles' /}
+		#{get 'moreScripts' /}
+    </head>
+    
+    <body>
+    	#{render 'layouts/_navbar.html'/}
+    	
+    	
+    	<div class="container-fluid-full">
+    		<div class="row-fluid">
+    			#{render 'layouts/_left_menu.html'/}
+    		
+    		
+    			<div id="content" class="span12">
+      				#{doLayout /}
+      			</div>
+      		
+      		</div>
+    	</div>
+    </body>
+</html>

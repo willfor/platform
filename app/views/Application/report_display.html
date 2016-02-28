@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+#{extends 'main.html' /}
+#{set title:'PPCenter' /}
+<div id="report_sheet">
+</div>
+
+<script src="/public/js/highcharts.js"></script>
+<script src="/public/js/modules/exporting.js"></script>
+
+<script type="text/javascript">
+
+listReportJobConsole();
+listReportData();
+listMonkeyTestResult();
+
+
+function listReportJobConsole(){
+	var mainTaskId = getUrlParamString("mainTaskId");
+	var ajaxUrl = "/ajax/PackController/listReportUrl?mainTaskId=" +mainTaskId ;
+	$.get(ajaxUrl).success(function(data){
+	    if(data ==null || data.length==0){
+	    	return;
+	    }
+	    for(i in data){
+	    	var d = data[i];
+	    	$("#job_url").append("<tr><td>"+d.subTaskTypeDescription+"</td><td><a href=\""+d.jobUrl+"\">"+d.jobUrl+"</a></td>");
+	    }
+    }).error(function(e){
+		alert(e);
+    });
+}
+
+
+function listMonkeyTestResult(){
+	var mainTaskId = getUrlParamString("mainTaskId");
+	var ajaxUrl = "/ajax/PackController/listMonkeyResult?mainTaskId=" +mainTaskId ;
+	$.get(ajaxUrl).success(function(data){
+	    if(data ==null || data.length==0){
+	    	return;
+	    }
+	    for(i in data){
+	    	var d = data[i];
+            var desc_li = "<li><span class='from' style='width:10%'><span class='glyphicons star'><i></i></span> <span class='label label-important'>Crash</span></span><span class='title' style='width:80%'><b>"+d.errorBreif+"</b></span><span class='date' style='width:10%'>共<b>"+d.errorCount+"次</b></span></li>"
+            var detial_li = "<pre>"+d.errorDetails+"</pre>"
+            $("#monkey_test_result").append(desc_li);
+            $("#monkey_test_result").append(detial_li);
+
+	    	// $("#monkey_test_result").append("<tr>").append(d.errorBreif).append("  共").append(d.errorCount).append("次").append("</tr>");
+	    	// $("#monkey_test_result").append("<tr> 详情如下：").append("</tr>");
+	    	// $("#monkey_test_result").append("<tr>").append(d.errorDetails).append("</tr>");
+	    }
+    }).error(function(e){
+		alert(e);
+    });
+
+}
+
+function getUrlParamString(name) {
+   var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
+   var r = window.location.search.substr(1).match(reg);
+   if (r!=null) return (r[2]); return null;
+}
+
+
+function listReportData(){
+    var mainTaskId = getUrlParamString("mainTaskId");
+	var ajaxUrl = "/ajax/PackController/listReportData?mainTaskId=" +mainTaskId ;
+	$.get(ajaxUrl).success(function(data){
+	    if(data ==null || data.length==0){
+	    	return;
+	    }
+	    for(i in data){
+	    	var r = data[i];
+	    	renderChart("container_"+r.subTaskType,r.subTaskTypeDescription,convertToTargetDataStructure(r.taskResults),r.rangeFrom,r.rangeTo,r.interval);
+	    }
+    }).error(function(e){
+		alert(e);
+    });
+}
+
+function convertToTargetDataStructure(srcData){
+	var expectedData = [];
+	for(var i=0;i<srcData.length;i++){
+		var currentData = srcData[i];
+		var constructedData = {name:currentData.name, data:convertToJSArray(currentData.data)};
+		expectedData.push(constructedData);
+	}
+	return expectedData;
+}
+
+
+function convertToJSArray(srcData){
+     var expectedData = [];
+    for(i=0;i<srcData.length;i++){
+ 	  expectedData.push(srcData[i]);
+    }
+    return expectedData;
+}
+
+function renderChart (id,taskTypeDescription,reportData,rangeFrom,rangeTo,interval) {
+    //alert(id + " " + taskTypeDescription + " " + rangeFrom + " " + rangeTo + " " + interval);
+    $('#'+id).highcharts({
+        chart: {
+            type: 'spline'
+        },
+        title: {
+            text: taskTypeDescription+'测试报表'
+        },
+        subtitle: {
+            text: '红色为预警'
+        },
+        xAxis: {
+            type: 'time',
+            labels: {
+                overflow: 'justify'
+            }
+        },
+        yAxis: {
+            title: {
+                text: taskTypeDescription+'使用率 (%)'
+            },
+            min: 0,
+            minorGridLineWidth: 0,
+            gridLineWidth: 0,
+            alternateGridColor: null,
+            plotBands: [{ // Light air
+                from: 12,
+                to: 14,
+                color: 'rgba(68, 170, 213, 0.1)',
+                label: {
+                    text: '',
+                    style: {
+                        color: '#606060'
+                    }
+                }
+            }, { // Light breeze
+                from: rangeFrom,
+                to: rangeTo,
+                color: 'rgba(255,0,0,0.3)',
+                label: {
+                    text: '预警范围',
+                    style: {
+                        color: '#606062'
+                    }
+                }
+            
+            }]
+        },
+        tooltip: {
+            valueSuffix: ' %'
+        },
+        plotOptions: {
+            spline: {
+                lineWidth: 2,
+                states: {
+                    hover: {
+                        lineWidth: 3
+                    }
+                },
+                marker: {
+                    enabled: false
+                },
+                pointInterval: interval, // 3秒
+                pointStart: 0
+            }
+        },
+        series: reportData,
+        navigation: {
+            menuItemStyle: {
+                fontSize: '10px'
+            }
+        }
+    });
+};
+
+
+</script>
+<table class="table table-bordered table-striped table-condensed">
+  <thead>
+  <tr>
+  <th>任务名</th>
+  <th>构建地址</th>
+  </tr>
+   </thead>
+   <tbody id="job_url">
+   </tbody>
+</table>
+
+<div id="container_CPU" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div id="container_Memory" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+<div class="span10">
+    <h1>崩溃日志：</h1>
+        <ul class="messagesList" id="monkey_test_result">
+
+        </ul>
+</div>

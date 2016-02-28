@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+#{extends 'main.html' /}
+#{set title:'PPCenter' /}
+
+
+<!-- 创建打包任务 -->
+<div class="row-fluid">	
+	<div class="box span12">
+		<div class="box-header">
+			<h2><i class="icon-align-justify"></i><span class="break"></span>创建打包</h2>
+			<div class="box-icon">
+				<a href="#" class="btn-minimize" id="btn-pack-updown"><i class="icon-chevron-down"></i></a>
+				<a href="#" class="btn-close"><i class="icon-remove"></i></a>
+			</div>
+		</div>
+
+		<div class="box-content" id="pack_form" style="display: none;">
+			<div class="alert alert-danger">
+				<button type="button" class="close" data-dismiss="alert">×</button>
+				<strong>注意事项：</strong>
+				<p>
+					1.打包中请选择（dep,common,barcode）的branch 和tag<br>
+					2.ppserver地址请参考下面例子填写<br>
+					3.渠道号默认是PP_24，正式包和测试包都是如此，不需要改动<br>
+					4.签名文件请选择“正式签名”<br>
+				</p>
+			</div>
+			<hr>
+
+			<div>
+				<table class="table table-bordered table-striped">
+					<tbody>
+						<tr>
+							<th>mainrepo：</th>
+							<td>
+							branch：<span id="depBranch"></span> tag：<input type="text" id="dep_tag" />
+							&nbsp;&nbsp;&nbsp;
+							<label class="checkbox inline">
+							<input type="checkbox" name="proguard_resource_files">是否混淆资源文件</input>
+							</label>
+							&nbsp;&nbsp;&nbsp;&nbsp;
+							<button class="btn btn-success" onclick="javascript:window.location.href='http://pp.ucweb.local:9000/application/branch_management'">管理分支</button>
+							</td>
+						</tr>
+						<tr>
+							<th>common：</th>
+							<td>branch：<span id="commonBranch"></span> tag：<input type="text" id="common_tag" /></td>
+						</tr>
+						<tr>
+							<th>barcode：</th>
+							<td>branch：<input type="text" id="barCode_branch" />tag：<input type="text" id="barCode_tag" /></td>
+						</tr>
+						<tr>
+							<th>ppserver地址：</th>
+							<td>
+							    <select id="ppserverUrl" class="span6">
+									<option value="http://ppservertest4prea.test2.uae.uc.cn" selected="selected">http://ppservertest4prea.test2.uae.uc.cn</option>
+									<option value="http://ppservertest4preb.test2.uae.uc.cn">http://ppservertest4preb.test2.uae.uc.cn</option>
+									<option value="http://ppservertest4prec.test2.uae.uc.cn" >http://ppservertest4prec.test2.uae.uc.cn</option>
+									<option value="http://sjzs-api.25pp.com" >http://sjzs-api.25pp.com</option>
+									<option value="http://pp.ucweb.local:9020" >http://pp.ucweb.local:9020</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th>版本名(VersionName)：</th>
+							<td><input type="text" id="versionname" /></td>
+						</tr>
+						<tr>
+							<th>版本号(VersionCode)：</th>
+							<td><span id="versioncode_span"></span></td>
+						</tr>
+						<tr>
+							<th>渠道(Channel)：</th>
+							<td><input type="text" id="channel" /></td>
+						</tr>
+						<tr>
+							<th>签名(Signature)：</th>
+							<td>
+								<select id="pack_sign">
+									<option value="default">默认签名</option>
+									<option value="formal" selected="selected">正式签名</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th>Agoo配置：</th>
+							<td>
+								<span id="agoo_config_span"></span>
+							</td>
+						</tr>
+						<tr>
+							<th>自动化测试：</th>
+							<td>
+							    <div class="controls" id="automationTypes_span"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<button class="btn btn-large btn-success" id="pack_submit">提交</button>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+
+
+<!-- 打包任务列表 -->
+<div class="row-fluid">	
+	<div class="box span12">
+		<div class="box-header">
+			<h2><i class="icon-align-justify"></i><span class="break"></span>打包任务列表&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id="branch_select_span"></span></h2>
+			<div class="box-icon">
+				<a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+				<a href="#" class="btn-close"><i class="icon-remove"></i></a>
+			</div>
+		</div>
+
+		<div class="box-content">
+			<table class="table table-bordered table-striped table-condensed">
+				<thead>
+					<tr>
+						<th>序号</th>
+						<th>应用名</th>
+						<th>版本名</th>
+						<th>版本号</th>
+						<th>分支信息</th>
+						<th>ppserver地址</th>
+						<th>状态</th>
+						<th>子任务状态</th>
+						<th>执行进度</th>
+						<th>打包方式</th>
+						<th>创建时间</th>
+						<th>测试报告</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+
+				<tbody id="pack_task_list_tbody">
+				</tbody>
+				
+			</table>
+			<div id="Pagination" class="pagination"></div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal hide fade" id="packModal">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">×</button>
+		<h3>应用包详情：</h3>
+	</div>
+	<div class="modal-body">
+		<form class="form-horizontal">
+			<fieldset>
+			<div class="control-group">
+				<label class="control-label">生成时间：</label>
+				<div class="controls">
+					<div id="apk_done_time"></div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">分支信息：</label>
+				<div class="controls">
+					<div id="d_branch_info"></div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">PPServer地址：</label>
+				<div class="controls">
+					<div id="d_ppserver_url"></div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">下载：</label>
+				<div class="controls">
+					<a class="btn" id="download_url">测试包(正式签名)</a>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label">二维码：</label>
+				<div class="controls">
+					<div id="qrcode"></div>
+				</div>
+			</div>
+			
+			<div class="control-group">
+				<label class="control-label">正式包 MD5：</label>
+				<div class="controls">
+					<div id="release_apk_md5"></div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">正式包大小：</label>
+				<div class="controls">
+					<div id="release_apk_filesize"></div>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">测试包Mapping下载：</label>
+				<div class="controls">
+					<a class="btn" id="debug_mapping">测试包Mapping</a>
+				</div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">正式包Mapping下载：</label>
+				<div class="controls">
+					<a class="btn" id="release_mapping">正式包Mapping</a><button type="button" class="btn btn-success btn-next" data-last="启用" id="btn_apply_mapping">启用 </button>
+				</div>
+			</div>
+			</fieldset>
+		</form>
+
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Close</a>
+	</div>
+</div>
+
+<script type="text/javascript" src="/public/js/jquery.pagination.js"></script>
+<script type="text/javascript" src="/public/js/app/pack.js" ></script>
